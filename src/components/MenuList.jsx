@@ -70,12 +70,12 @@ const MenuList = () => {
   return (
     <StyledMenuList>
       <Item onClick={() => handleClick("calendar")} isActive={isCalendarActive}>
-        <h2 style={{ fontSize: "1rem" }}>מערכת שעות</h2>
+        <h2 style={{ fontSize: "1rem", width: '100%' }}>מערכת שעות</h2>
       </Item>
 
 
       <Item onClick={() => handleClick("setgrouplesson")} isActive={isSetGroupLessonActive}>
-        <h2 style={{ fontSize: "1rem", padding: "1rem" }}>קביעת אימונים שבועיים</h2>
+        <h2 style={{ fontSize: "1rem", padding: "1rem", width:'100%' }}>קביעת אימונים שבועיים</h2>
       </Item>
     </StyledMenuList>
   );
