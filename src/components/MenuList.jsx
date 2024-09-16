@@ -47,7 +47,7 @@ const Item = styled.li`
   }
 
   @media (orientation: portrait) {
-    width: max-content;
+    width: 50%;
   }
 
   h2 {
