@@ -87,7 +87,7 @@ const StyledMenuList = styled(motion.ul)`
   height: 10svh;
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content:space-evenly;
   z-index: 1;
   overflow-y: auto;
   position: absolute;
