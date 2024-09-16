@@ -7,7 +7,7 @@ const Item = styled.li`
   border-top: 1px solid grey !important;
   color: black;
   background-color: #ffffff;
-  width: 25%;
+  width: 50%;
   flex-grow:1;
   padding: 2rem;
   all: unset;
@@ -43,7 +43,7 @@ const Item = styled.li`
   }
 
   @media (orientation: landscape) {
-    width: 25%;
+    width: 50%;
   }
 
   @media (orientation: portrait) {
