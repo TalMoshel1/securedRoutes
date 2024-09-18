@@ -139,7 +139,6 @@ const SignIn = () => {
       const data = await response.json();
       setLoading(false);
       if (data.message === "Token is valid") {
-        console.log(location.state?.state)
         if (location.state?.state) {
           navigate(location.state?.state);
         }

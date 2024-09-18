@@ -11,6 +11,7 @@ const ApprovalLink = () => {
   const [approvedLesson, setApprovedLesson] = useState();
 
 
+
   useEffect(() => {
     const authenticateRequest = async () => {
       try {
@@ -33,11 +34,11 @@ const ApprovalLink = () => {
 
         const data = await response.json();
         if (data.message !== "Token is valid") {
-          navigate("/signin", { state: { state: '/requestPrivte' } });
+          navigate("/signin", { state: { state: `/approveLink/${lessonId}` } });
         }
       } catch (error) {
         console.error("Error verifying token:", error);
-        navigate("/signin", { state: { state: '/requestPrivte' } });
+        navigate("/signin", { state: { state: `/approveLink/${lessonId}` } });
       }
     };
 
