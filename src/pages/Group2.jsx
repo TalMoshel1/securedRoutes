@@ -97,6 +97,7 @@ const FormItemContainer = styled.div`
   align-items: right;
   position: relative;
   width: 100%;
+  overflow: hidden;
   .scroll {
     overflow-y: hidden;
   }
@@ -109,9 +110,9 @@ const FormItemContainer = styled.div`
     height: 2.35rem;
     border-radius: 20px;
     cursor: pointer;
-    // background-color: #e6e5eb !important;
     text-align: right;
     vertical-align: baseline;
+    overflow:hidden;
   }
 
   .MuiInputBase-root,
@@ -119,9 +120,11 @@ const FormItemContainer = styled.div`
     border: none !important;
   }
 
+
   .date-picker-container > * {
     height: 100%;
     color: black;
+    width: 100%;
   }
 
   .MuiFormControl-root {
@@ -131,13 +134,16 @@ const FormItemContainer = styled.div`
 
   .MuiInputAdornment-root {
   position: relative;
+  margin-left: 0rem;
+  padding-left: 0rem
   }
 
   .MuiInputBase-input {
     position:'absolute',
     left: '0%',
     top: '50%',
-    transform: 'translate(0, -50%)'
+    transform: 'translate(0, -50%)',
+    width: '100%'
   }
 
 
@@ -681,7 +687,6 @@ const StyledCheckbox = styled.input`
   height: 2.35rem;
   align-content: baseline;
   margin: 0;
-  // border: 2px solid #ddd;
   border-radius: 4px;
   background-color: ${(props) =>
     props.checked ? "#ccc" : props.repeatsWeekly ? "#ccc" : "#fff"};

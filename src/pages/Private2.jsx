@@ -22,23 +22,28 @@ export const StyledBox = styled(Box)(({}) => ({
     border: "none",
     width: "100%",
     height: "100%",
+    width: '100%'
     
   },
 
   "& .MuiInputBase-root": {
     paddingRight: "0rem",
-    width: '100%',
-    position: 'relative'
+    paddingLeft: '0rem',
+    marginLeft: '0rem',
+    width: '100% !important',
+    position: 'relative',
+    border: '1px solid red'
+
   },
    "& .MuiButtonBase-root": { 
     position:'absolute',
     left: '0%',
-    top: '50%',
+    top: '0%',
     transform: 'translate(0, -50%)',
     margin:'0',
     backgroundColor: '#E6E5EB !important',
-    paddingLeft: '1rem'
-
+    paddingLeft: '0rem',
+    width: "100% !important",
 
    },
   "& .MuiInputAdornment-root": {
@@ -52,6 +57,8 @@ export const StyledBox = styled(Box)(({}) => ({
   },
   "& .MuiInputBase-input": {
     color: "black !important",
+    width: "100% !important",
+    width: '100%'
   },
   
 }));
@@ -130,6 +137,7 @@ const DateContainer = styled.div`
 
   .MuiInputBase-root {
     border: none !important;
+    width: 100%;
   }
 
   .date-picker-container > * {
@@ -170,6 +178,7 @@ const DateContainer = styled.div`
     font-weight: 400;
     font-size: 1rem !important;
     color: black;
+    width: 100%;
   }
 
   .has-value {
