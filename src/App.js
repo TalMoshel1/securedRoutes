@@ -1,16 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import Calendar from "./pages/Calendar";
 import DeleteLesson from "./components/deleteLesson";
 import DetailsLesson from './components/detailsLesson';
 import Modal from "./components/Modal";
-import SignIn from "./pages/SignIn";
 import ApproveLink from "./pages/ApprovalLink";
-import SetGroupLesson from "./pages/setGroupLesson";
 import "./App.css";
 import { useSelector } from "react-redux";
-import RequestPrivateLesson from "./pages/requestPrivate";
 import FormContainer from "./components/formContainer";
 import MenuList from "./components/MenuList";
 import { MenuProvider } from "./context/useMenu";
@@ -20,6 +17,8 @@ import DateSliderWeeks from "./components/DateSliderWeeks";
 import Private2 from './pages/Private2';
 import Header from "./New UI/Header";
 import Group2 from "./pages/Group2";
+import  {AuthenticationProvider}  from "./context/useAuthenticate.jsx";
+import { AuthContext } from "./context/useAuthenticate.jsx";
 
 function App() {
   const theme = useSelector((state) => state.theme);
@@ -28,15 +27,25 @@ function App() {
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <MenuProvider>
+          <AuthenticationProvider>
           <AppContent />
+          </AuthenticationProvider>
         </MenuProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
 }
 
-function AppContent() {
+  function  AppContent() {
   const [isMenuOpen, toggleMenu] = useState(false);
+  const {boxing} = useContext(AuthContext)
+  const isTokenValid = boxing 
+
+  console.log('isTokenValid: ', isTokenValid)
+
+
+
+
 
   const handleToggleMenu = () => {
     toggleMenu(!isMenuOpen);
@@ -55,13 +64,13 @@ function AppContent() {
       <Header />
       <MenuList isMenuOpen={isMenuOpen} handleToggleMenu={handleToggleMenu} />
 
-      {isDeleteLessonModalOpen && (
+      {(isDeleteLessonModalOpen && isTokenValid) && (
         <Modal type="delete">
           <DeleteLesson />
         </Modal>
       )}
 
-      {isDetailsLessonModalOpen && (
+      {(isDetailsLessonModalOpen && isTokenValid) && (
         <Modal type="details">
           <DetailsLesson />
         </Modal>
@@ -80,15 +89,25 @@ function AppContent() {
             </StyledDisabledWrapper>
           }
         />
-        <Route path="/signin" element={<SignIn />} />
-        <Route
+          {isTokenValid ? <Route
           path="/setgrouplesson"
           element={
             <FormContainer>
               <Group2 />
             </FormContainer>
           }
-        />
+        /> : <Route
+        path="/setgrouplesson"
+        element={
+          <FormContainer>
+            <strong style={{textAlign:'center'}}>Error 403<br/>
+              You dont have permission to this page</strong>
+          </FormContainer>
+        }
+      />
+      
+      }
+
         <Route path="/approveLink/:lessonId" element={<ApproveLink />} />
         <Route
           path="/requestPrivte"

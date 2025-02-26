@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { toggleSetGroupModal } from "../redux/calendarSlice.js";
 import { repeatEndDate } from "../functions/repeatEndDate.js";
-import ClipLoader from "react-spinners/ClipLoader";
 import { Box } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { StyledBox } from "./Private2.jsx";
@@ -12,239 +11,9 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { TextField } from "@mui/material";
-
-export const StyledSelectContainer = styled.div`
-  visibility: visible !important;
-  // color: black !important;
-  position: relative;
-
-  .custom-select {
-    font-size: 1rem;
-
-    @supports (-webkit-touch-callout: none) {
-      label {
-        font-size: 1.1rem;
-        font-weight: 400;
-      }
-    }
-
-    @supports not (-webkit-touch-callout: none) {
-      label {
-        font-size: 1rem;
-      }
-    }
-  }
-
-  .options-container {
-    color: grey;
-    position: absolute;
-    background-color: #ccc !important;
-    top: 2.85rem;
-    left: 0;
-    width: 100%;
-    max-height: 200px;
-    overflow-y: auto;
-    border-radius: 20px;
-    z-index: 1000;
-    display: none;
-  }
-
-    .options-container.show {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    display: block;
-    overflow: scroll;
-    scrollbar-width: none; 
-    overflow: auto;
-
-  }
-
-
-  .options-container::-webkit-scrollbar {
-    overflow: hidden;
-  }
-
-  .options-container {
-    scrollbar-width: none; 
-
-  }
-
-  .options-container::-ms-scrollbar {
-  display: none; 
-}
-
-
-
-  .option {
-    background-color: #e6e5eb;
-    width: 100%;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    cursor: pointer;
-    color: black !important;
-
-       &:hover {
-    background-color: #A0A0A0	;}
-  }
-
-`;
-
-const FormItemContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: right;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  .scroll {
-    overflow-y: hidden;
-  }
-
-  .date-picker-container {
-    direction: rtl;
-    width: 100%;
-    font-size: 1rem;
-    flex-grow: 1;
-    height: 2.35rem;
-    border-radius: 20px;
-    cursor: pointer;
-    text-align: right;
-    vertical-align: baseline;
-    overflow:hidden;
-  }
-
-  .MuiInputBase-root,
-  .MuiButtonBase-root {
-    border: none !important;
-  }
-
-
-  .date-picker-container > * {
-    height: 100%;
-    color: black;
-    width: 100%;
-  }
-
-  .MuiFormControl-root {
-    -webkit-flex-direction: none;
-    width: 100%;
-  }
-
-  .MuiInputAdornment-root {
-  position: relative;
-  margin-left: 0rem;
-  padding-left: 0rem
-  }
-
-  .MuiInputBase-input {
-    position:'absolute',
-    left: '0%',
-    top: '50%',
-    transform: 'translate(0, -50%)',
-    width: '100%'
-  }
-
-
-  input::placeholder {
-    // color: grey;
-  }
-`;
-
-const RequestForm = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  padding: 1rem;
-  gap: 0.5rem;
-  direction: rtl;
-  left: 50%;
-  width: max-content;
-  transform: translate(-50%);
-  font-size: 1rem;
-  text-align: center;
-  position: relative;
-  color: black;
-  font-family: "Roboto", sans-serif;
-
-  textarea {
-    resize: none;
-          -webkit-resize: none; /* For Safari and older Chrome */
-  -moz-resize: none; /* For older Firefox */
-  -ms-resize: none; /* For older IE */
-  }
-
-
-  textarea,
-  input,
-  select {
-    font-family: "Roboto", sans-serif;
-    font-size: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-right: 1rem;
-    box-sizing: border-box;
-    border: none;
-    color: black !important;
-    cursor: pointer;
-    border-radius: 20px;
-    font-size: 1rem;
-    height: 2.35rem;
-
-    &::placeholder {
-      color: grey;
-      opacity: 1;
-    }
-  }
-
-  textarea,
-  input:not([type="checkbox"]),
-  select:not([name="repeatMonth"]) {
-    background-color: #e6e5eb;
-    width: 100%;
-    font-size: 1rem !important;
-  }
-
-  select([name="repeatMonth"]) {
-    background-color: ${(props) => (props.checked ? "#e6e5eb !important" : "")};
-  }
-
-  .custom-select {
-    cursor: pointer;
-    background-color: #e6e5eb !important;
-    border-radius: 20px;
-    // min-width: 2.35rem;
-  }
-
-  label:not([name="months"]) {
-    display: none;
-  }
-
-  button {
-    padding: 1rem;
-    font-size: 1rem !important;
-    // border: 1px solid black;
-    border-radius: 20px;
-    cursor: pointer;
-    background-color: #F0F0F0 !important;
-    color: black !important;
-  }
-
-  .line3 {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 90%;
-  }
-
-  .line3 div {
-  }
-`;
-
-const Main = styled.main`
-    display: flex;
-    flex-direction: column;
-    align-items: center;`;
+import * as styledGroup from "../groupHelpers/styled-component.js";
+import * as groupFunctions from "../groupHelpers/functions.js";
+import ClipLoader from "react-spinners/ClipLoader.js";
 
 const Group2 = () => {
   const dispatch = useDispatch();
@@ -263,7 +32,7 @@ const Group2 = () => {
     type: "group",
   });
   const [message, setMessage] = useState("");
-  const [displayPage, setDisplayPage] = useState(false);
+  const [displayPage, setDisplayPage] = useState(true);
   const [showMonthsOptions, setShowMonthsOptions] = useState(false);
   const monthRef = useRef(null);
   const nameRef = useRef(null);
@@ -366,6 +135,7 @@ const Group2 = () => {
     const repeatEnd = repeatEndDate(day, parseInt(repeatMonth, 10));
 
     try {
+      setDisplayPage(false)
       const token = JSON.parse(localStorage.getItem("boxing"))?.token;
       const response = await fetch(
         "https://appointment-back-qd2z.onrender.com/api/lessons/group",
@@ -384,6 +154,7 @@ const Group2 = () => {
       );
       const data = await response.json();
       if (!data.message) {
+        setDisplayPage(true)
         return navigate("/calendar");
       }
       setMessage(data.message);
@@ -403,59 +174,28 @@ const Group2 = () => {
     setMessage("");
   };
 
-  const authenticateRequest = async () => {
-    try {
-      const token = JSON.parse(localStorage.getItem("boxing"))?.token;
-      if (!token) throw new Error("No token found");
-      const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/auth/verify-token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (data.message !== "Token is valid") {
-        navigate("/signin", { state: { state: "/setgrouplesson" } });
-      } else {
-        setDisplayPage(true);
-      }
-    } catch (error) {
-      console.error("Error verifying token:", error);
-      navigate("/signin", { state: { state: "/setgrouplesson" } });
-    }
-  };
-
   useEffect(() => {
-    authenticateRequest();
+    groupFunctions.authenticateRequest(navigate, setDisplayPage);
   }, []);
-
 
   if (message) {
     return (
-      <Main>
+      <styledGroup.Main>
         <div onClick={handleCloseError} style={{ direction: "rtl" }}>
           X
         </div>
         <strong>{message}</strong>
-      </Main>
+      </styledGroup.Main>
     );
   }
 
-  // if (!displayPage) {
-  //   return <ClipLoader color="#66FCF1" loading={true} size={150} />;
+  // if (displayPage) {
+  //   return  <div style={{width:'100%', display: 'flex', justifyContent:'center'}}><ClipLoader color="#000000" loading={true} size={150} /></div>
   // }
 
   return (
     <>
-      <RequestForm onSubmit={handleSubmit}>
+      <styledGroup.RequestForm onSubmit={handleSubmit}>
         <div
           className="line"
           style={{
@@ -479,18 +219,18 @@ const Group2 = () => {
         </h1>
 
         <div className="line3">
-          <FormItemContainer
+          <styledGroup.FormItemContainer
             style={{ flexDirection: "row", height: "2.35rem", gap: "0.5rem" }}
           >
             <label style={{ color: textColor }}>אימון חוזר:</label>
-            <StyledCheckbox
+            <styledGroup.StyledCheckbox
               type="checkbox"
               name="repeatsWeekly"
               checked={formData.repeatsWeekly}
               onChange={handleChange}
             />
 
-            <StyledSelectContainer
+            <styledGroup.StyledSelectContainer
               ref={monthRef}
               style={{
                 width: "100%",
@@ -521,7 +261,7 @@ const Group2 = () => {
                   htmlFor="months"
                   name="months"
                   style={{
-                    color: formData.repeatsWeekly ? "black" : "grey", // Change text color based on state
+                    color: formData.repeatsWeekly ? "black" : "grey", 
                     cursor: formData.repeatsWeekly ? "pointer" : "not-allowed",
                     position: "relative",
                     top: "50%",
@@ -543,14 +283,16 @@ const Group2 = () => {
                 }`}
                 ref={monthRef}
               >
+                {showMonthsOptions}
+                
                 {generateMonthOptions()}
               </div>
-            </StyledSelectContainer>
-          </FormItemContainer>
+            </styledGroup.StyledSelectContainer>
+          </styledGroup.FormItemContainer>
         </div>
 
         <div className="line3">
-          <FormItemContainer>
+          <styledGroup.FormItemContainer>
             <label>תאריך האימון:</label>
             <Box
               className="date-picker-container"
@@ -590,11 +332,11 @@ const Group2 = () => {
                 </StyledBox>
               </LocalizationProvider>
             </Box>
-          </FormItemContainer>
+          </styledGroup.FormItemContainer>
         </div>
 
         <div className="line3">
-          <FormItemContainer>
+          <styledGroup.FormItemContainer>
             <label>שם האימון:</label>
             <input
               placeholder="שם"
@@ -605,8 +347,8 @@ const Group2 = () => {
               onChange={handleChange}
               required
             />
-          </FormItemContainer>
-          <FormItemContainer>
+          </styledGroup.FormItemContainer>
+          <styledGroup.FormItemContainer>
             <label>תיאור האימון:</label>
             <input
               style={{ alignContent: "center" }}
@@ -617,11 +359,11 @@ const Group2 = () => {
               onChange={handleChange}
               required
             />
-          </FormItemContainer>
+          </styledGroup.FormItemContainer>
         </div>
 
         <div className="line3">
-          <FormItemContainer>
+          <styledGroup.FormItemContainer>
             <label>שעת התחלה:</label>
             <input
               placeholder="שעה התחלה"
@@ -633,9 +375,9 @@ const Group2 = () => {
               pattern={timePattern.source}
               required
             />
-          </FormItemContainer>
+          </styledGroup.FormItemContainer>
 
-          <FormItemContainer>
+          <styledGroup.FormItemContainer>
             <label>שעת סיום:</label>
             <input
               placeholder="שעת סיום"
@@ -647,7 +389,7 @@ const Group2 = () => {
               pattern={timePattern.source}
               required
             />
-          </FormItemContainer>
+          </styledGroup.FormItemContainer>
         </div>
         <div
           className="line"
@@ -659,9 +401,9 @@ const Group2 = () => {
           }}
         ></div>
 
-        <button type="submit" onClick={(e) => handleSubmit(e)} style={{border: 'none'}}>
+        {displayPage ? <button type="submit" onClick={(e) => handleSubmit(e)} style={{border: 'none'}}>
           הוסף אימון
-        </button>
+        </button> : <button style={{ display: 'flex', justifyContent:'center', border:'none'}}><ClipLoader color="#000000" loading={true} size={20} /></button> }
         <div
           className="line"
           style={{
@@ -671,49 +413,9 @@ const Group2 = () => {
             backgroundColor: "#e6e5eb",
           }}
         ></div>
-      </RequestForm>
+      </styledGroup.RequestForm>
     </>
   );
 };
 
 export default Group2;
-
-const StyledCheckbox = styled.input`
-  position: relative;
-  appearance: none;
-  width: 11rem;
-  text-align: center;
-  height: 2.35rem;
-  align-content: baseline;
-  margin: 0;
-  border-radius: 4px;
-  background-color: ${(props) =>
-    props.checked ? "#ccc" : props.repeatsWeekly ? "#ccc" : "#fff"};
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-
-  &:hover {
-    border: 1px solid black;
-  }
-
-  &:checked {
-    background-color: #e6e5eb;
-  }
-
-  &::before {
-    content: "אימון חוזר";
-    color: grey;
-    display: block;
-    width: max-content;
-    text-align: center;
-    align-content: baseline;
-    font-zide:1rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-`;
-
-
-

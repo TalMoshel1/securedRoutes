@@ -20,6 +20,7 @@ const Calendar = () => {
   const authenticateRequest = async () => {
     try {
       const token = JSON.parse(localStorage.getItem("boxing"))?.token;
+      console.log('token calendar: ', token)
       if (!token) throw new Error("No token found");
       const response = await fetch(
         "https://appointment-back-qd2z.onrender.com/api/auth/verify-token",
@@ -37,13 +38,14 @@ const Calendar = () => {
 
       const data = await response.json();
       if (data.message !== "Token is valid") {
-        navigate("/signin", { state: { state: "/calendar" } });
+        // navigate("/signin", { state: { state: "/calendar" } });
       } else {
         setDisplayPage(true);
       }
     } catch (error) {
       console.error("Error verifying token:", error);
-      navigate("/signin", { state: { state: "/calendar" } });
+      setDisplayPage(true);
+
     }
   };
 
