@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   toggleSetDeleteLessonModal,
   setLessonsToDisplay,
 } from "../redux/calendarSlice.js";
+import { VerifyTokenContext } from "../context/verifyTokenContext.jsx";
+import { removeCookie } from "../utils/removeCookie.js";
+import { useKickOut } from "../hooks/KickOut.jsx";
+import { TokenErrorContext } from "../context/tokenErrorContext.jsx";
 
 const DeleteLesson = ({
   lesson: propLesson,
@@ -14,9 +18,13 @@ const DeleteLesson = ({
 }) => {
   const dispatch = useDispatch();
   const lesson = useSelector((state) => state.calendar.deleteLessonModalData);
+  const { isVerified, verify } = useContext(VerifyTokenContext);
   const [boxing, setBoxing] = useState(localStorage.getItem("boxing"));
   const token = JSON.parse(boxing)?.token;
   const [isDeleteAll, setIsDeleteAll] = useState(false);
+  const { navigateToSignIn } = useKickOut();
+  const {setError} = useContext(TokenErrorContext);
+  
 
   const handleToggleModal = (obj) => {
     dispatch(toggleSetDeleteLessonModal());
@@ -32,19 +40,19 @@ const DeleteLesson = ({
   const deleteLesson = async (lessonId) => {
     try {
       const response = await fetch(
-        `https://appointment-back-qd2z.onrender.com/api/lessons/${lessonId}`,
+        `http://localhost:3000/api/lessons/${lessonId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            authorization: token,
           },
           body: JSON.stringify({ deleteAll: isDeleteAll }),
           credentials: "include",
         }
       );
-
       if (!response.ok) {
+        removeCookie("token");
+        setError()
         throw new Error(
           `HTTP error! Status: ${response.status} ${response.statusText}`
         );
@@ -73,10 +81,9 @@ const DeleteLesson = ({
     align-items: center;
 
     button {
-    padding: 1rem;
-    font-size: 1rem;
-    border: none;
-
+      padding: 1rem;
+      font-size: 1rem;
+      border: none;
     }
   `;
 
@@ -89,9 +96,14 @@ const DeleteLesson = ({
       {repeatsWeekly && (
         <>
           <label
-            style={{ color: "#fff", direction: "rtl", textAlign: "center", fontWeight: '100' }}
+            style={{
+              color: "#fff",
+              direction: "rtl",
+              textAlign: "center",
+              fontWeight: "100",
+            }}
           >
-             מחק את כל השיעורים בסדרה זו
+            מחק את כל השיעורים בסדרה זו
           </label>
           <input
             type="checkbox"
@@ -103,7 +115,13 @@ const DeleteLesson = ({
 
       <button
         type="button"
-        style={{backgroundColor: '#F0F0F0', color: 'black !important', padding: '1rem', borderRadius: '20px', width: 'max-content'}}
+        style={{
+          backgroundColor: "#F0F0F0",
+          color: "black !important",
+          padding: "1rem",
+          borderRadius: "20px",
+          width: "max-content",
+        }}
         onClick={() => {
           if (currentLesson._id) {
             deleteLesson(currentLesson._id);

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { formatThreeLettersMonthAndDaysToHebrew } from '../functions/formatThreeLettersMonthAndDaysToHebrew';
+import { formatThreeLettersMonthAndDaysToHebrew } from "../utils/formatThreeLettersMonthAndDaysToHebrew";
 
 const DayHeader = styled.div`
   padding-left: 0.5rem;
@@ -13,7 +13,8 @@ const DayHeader = styled.div`
   }
 
   .date {
-    background-color: ${(props) => (props.isToday? props.isToday: props.isSelected ? "#00d180" :'none')};
+    background-color: ${(props) =>
+      props.isToday ? props.isToday : props.isSelected ? "#00d180" : "none"};
     border-radius: 20px;
     width: 2rem;
     height: 2rem;
@@ -24,12 +25,13 @@ const DayHeader = styled.div`
 const Day = ({ date, lessons, isSelected, onSelectDate, isToday }) => {
   const dayOfTheWeek = date.displayedDate.split(",")[0];
 
-
   return (
     <div className="day" onClick={onSelectDate}>
       <DayHeader isSelected={isSelected} isToday={isToday}>
-        <h1 style={{color: '#C5C6C7'}}>{formatThreeLettersMonthAndDaysToHebrew('day', dayOfTheWeek)}</h1>
-        <h1 className='date'>{new Date(date.date).getDate()}</h1>
+        <h1 style={{ color: "#C5C6C7" }}>
+          {formatThreeLettersMonthAndDaysToHebrew("day", dayOfTheWeek)}
+        </h1>
+        <h1 className="date">{new Date(date.date).getDate()}</h1>
       </DayHeader>
     </div>
   );

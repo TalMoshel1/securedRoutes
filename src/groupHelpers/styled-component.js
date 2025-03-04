@@ -1,6 +1,11 @@
 import styled, { keyframes, css } from "styled-components";
 
- const StyledSelectContainer = styled.div`
+const StyledSelectContainer = styled.div`
+
+  &.no-border-on-focus:focus {
+    border: none; 
+    outliner: none;
+  }
   visibility: visible !important;
   // color: black !important;
   position: relative;
@@ -24,8 +29,8 @@ import styled, { keyframes, css } from "styled-components";
 
   .options-container {
     color: grey;
+    background-color: #e6e5eb;
     position: absolute;
-    background-color: #ccc !important;
     top: 2.85rem;
     width: 100%;
     max-height: 200px;
@@ -72,10 +77,21 @@ import styled, { keyframes, css } from "styled-components";
     padding-bottom: 0.5rem;
     cursor: pointer;
     color: black !important;
+    border-radius:20px;
 
        &:hover {
-    background-color: #A0A0A0	;}
+    background-color: #A0A0A0;
+    }
+
+      &:focus { 
+    // border: 2px solid black;
+    // outline: none;
+    outline: solid;
   }
+  }
+
+
+}
 
 `;
 
@@ -90,6 +106,11 @@ const FormItemContainer = styled.div`
     overflow-y: hidden;
   }
 
+  &:focus{
+    border: 2px solid black;
+    outline: none;
+  }
+
   .date-picker-container {
     direction: rtl;
     width: 100%;
@@ -101,8 +122,14 @@ const FormItemContainer = styled.div`
     text-align: right;
     vertical-align: baseline;
     overflow:hidden;
+    
   }
 
+  .date-picker-container:focus {
+    border: 2px solid black;
+    outline: none;
+
+  }
   .MuiInputBase-root,
   .MuiButtonBase-root {
     border: none !important;
@@ -135,8 +162,10 @@ const FormItemContainer = styled.div`
   }
 
 
-  input::placeholder {
-    // color: grey;
+
+  input:focus, label:focus {
+    border: 2px solid black;
+    outline: none;
   }
 `;
 
@@ -158,11 +187,10 @@ const RequestForm = styled.section`
 
   textarea {
     resize: none;
-          -webkit-resize: none; /* For Safari and older Chrome */
-  -moz-resize: none; /* For older Firefox */
-  -ms-resize: none; /* For older IE */
+    -webkit-resize: none; /* For Safari and older Chrome */
+    -moz-resize: none; /* For older Firefox */
+    -ms-resize: none; /* For older IE */
   }
-
 
   textarea,
   input,
@@ -203,6 +231,10 @@ const RequestForm = styled.section`
     background-color: #e6e5eb !important;
     border-radius: 20px;
     // min-width: 2.35rem;
+    &:focus {
+      border: 2px solid black;
+      outline:none;
+      }
   }
 
   label:not([name="months"]) {
@@ -215,7 +247,7 @@ const RequestForm = styled.section`
     // border: 1px solid black;
     border-radius: 20px;
     cursor: pointer;
-    background-color: #F0F0F0 !important;
+    background-color: #f0f0f0 !important;
     color: black !important;
   }
 
@@ -231,49 +263,52 @@ const RequestForm = styled.section`
 `;
 
 const Main = styled.main`
-    display: flex;
-    flex-direction: column;
-    align-items: center;`;
-
-
-    
-const StyledCheckbox = styled.input`
-position: relative;
-appearance: none;
-width: 11rem;
-text-align: center;
-height: 2.35rem;
-align-content: baseline;
-margin: 0;
-border-radius: 4px;
-background-color: ${(props) =>
-  props.checked ? "#ccc" : props.repeatsWeekly ? "#ccc" : "#fff"};
-cursor: pointer;
-transition: background-color 0.2s ease, border-color 0.2s ease;
-
-&:hover {
-  border: 1px solid black;
-}
-
-&:checked {
-  background-color: #e6e5eb;
-}
-
-&::before {
-  content: "אימון חוזר";
-  color: grey;
-  display: block;
-  width: max-content;
-  text-align: center;
-  align-content: baseline;
-  font-zide:1rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
+const StyledCheckbox = styled.input`
+  position: relative;
+  appearance: none;
+  width: 11rem;
+  text-align: center;
+  height: 2.35rem;
+  align-content: baseline;
+  margin: 0;
+  border-radius: 4px;
+  background-color: ${(props) =>
+    props.checked ? "#ccc" : props.repeatsWeekly ? "#ccc" : "#fff"};
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 
+  &:hover {
+    border: 1px solid black;
+  }
 
-export {StyledCheckbox, Main, RequestForm, FormItemContainer, StyledSelectContainer};
+  &:checked {
+    background-color: #e6e5eb;
+  }
+
+  &::before {
+    content: "אימון חוזר";
+    color: grey;
+    display: block;
+    width: max-content;
+    text-align: center;
+    align-content: baseline;
+    font-zide: 1rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+`;
+
+export {
+  StyledCheckbox,
+  Main,
+  RequestForm,
+  FormItemContainer,
+  StyledSelectContainer,
+};

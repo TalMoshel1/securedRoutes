@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { incrementHour } from "../functions/incrementHour.js";
+import { incrementHour } from "../utils/incrementHour.js";
 import styled, { keyframes, css } from "styled-components";
-import { openWhatsApp } from "../functions/sendWhatsApp.js";
+import { openWhatsApp } from "../utils/sendWhatsApp.js";
 import ClipLoader from "react-spinners/ClipLoader";
 import SubmitPrivateRequest from "./SubmitPrivateRequest.jsx";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { useNavigate } from "react-router-dom";
 import { Box, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -22,52 +21,47 @@ export const StyledBox = styled(Box)(({}) => ({
     border: "none",
     width: "100%",
     height: "100%",
-    width: '100%'
-    
+    width: "100%",
   },
 
   "& .MuiInputBase-root": {
     paddingRight: "0rem",
-    paddingLeft: '0rem',
-    marginLeft: '0rem',
-    width: '100% !important',
-    position: 'relative',
-    border: '1px solid red'
-
-  },
-   "& .MuiButtonBase-root": { 
-    position:'absolute',
-    left: '0%',
-    top: '0%',
-    transform: 'translate(0, -50%)',
-    margin:'0',
-    backgroundColor: '#E6E5EB !important',
-    paddingLeft: '0rem',
+    paddingLeft: "0rem",
+    marginLeft: "0rem",
     width: "100% !important",
-
-   },
+    position: "relative",
+    border: "1px solid red",
+  },
+  "& .MuiButtonBase-root": {
+    position: "absolute",
+    left: "0%",
+    top: "0%",
+    transform: "translate(0, -50%)",
+    margin: "0",
+    backgroundColor: "#E6E5EB !important",
+    paddingLeft: "0rem",
+    width: "100% !important",
+  },
   "& .MuiInputAdornment-root": {
-    position: 'relative !important',
+    position: "relative !important",
   },
   "& .MuiSvgIcon-root": {
-    position:'absolute',
-    left: '0%',
-    marginLeft: '1rem',
-    color: 'grey',
+    position: "absolute",
+    left: "0%",
+    marginLeft: "1rem",
+    color: "grey",
   },
   "& .MuiInputBase-input": {
     color: "black !important",
     width: "100% !important",
-    width: '100%'
+    width: "100%",
   },
-  
 }));
 
 const SlideContainer = styled.div`
   transition: right 0.3s ease;
 
   @media (orientation: landscape) {
-  
   }
 
   input,
@@ -119,7 +113,7 @@ const DateContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%; 
+  width: 100%;
 
   .date-picker-container {
     direction: rtl;
@@ -224,7 +218,6 @@ const Hour = styled.div`
   }
 
   .custom-select {
-
     width: 100%;
   }
 
@@ -388,7 +381,6 @@ export const PrivateForm = styled.form`
   color: black;
 
   @media (orientation: portrait) {
-
     width: 90%;
   }
   @media (orientation: landscape) {
@@ -405,8 +397,7 @@ export const PrivateForm = styled.form`
   height: 100%;
 
   input,
-  .date-picker-container 
-  {
+  .date-picker-container {
     font-family: "Roboto", sans-serif;
     font-size: 1rem;
     padding-top: 0.5rem;
@@ -423,12 +414,10 @@ export const PrivateForm = styled.form`
       color: grey;
       opacity: 1;
     }
-
   }
 
   input {
-      font-size: 3rem;
-
+    font-size: 3rem;
   }
 
   h1 {
@@ -440,7 +429,6 @@ export const StyledSelectContainer = styled.div`
   visibility: visible !important;
   color: black !important;
   position: relative;
-
 
   .custom-select {
     font-size: 1rem;
@@ -481,25 +469,21 @@ export const StyledSelectContainer = styled.div`
     align-items: center;
     display: block;
     overflow: scroll;
-    scrollbar-width: none; 
+    scrollbar-width: none;
     overflow: auto;
-
   }
-
 
   .options-container::-webkit-scrollbar {
     overflow: hidden;
   }
 
   .options-container {
-    scrollbar-width: none; 
-
+    scrollbar-width: none;
   }
 
   .options-container::-ms-scrollbar {
-  display: none; 
-}
-
+    display: none;
+  }
 
   .option {
     background-color: #e6e5eb;
@@ -515,7 +499,8 @@ export const StyledSelectContainer = styled.div`
     }
 
     &:hover {
-    background-color: #A0A0A0	;}
+      background-color: #a0a0a0;
+    }
   }
 `;
 
@@ -548,7 +533,7 @@ const ArrowLeft = styled.div`
   cursor: pointer;
   padding: 1rem;
   border-radius: 20px;
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
 
   animation: ${(props) =>
     props.animate
@@ -636,18 +621,15 @@ const RequestPrivateLesson = () => {
     fixedDay.setDate(fixedDay.getDate() + 1);
     try {
       setLoading(true);
-      const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/lessons/day",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            date: fixedDay,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/api/lessons/day", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date: fixedDay,
+        }),
+      });
 
       if (!response.ok) {
         setLoading(false);
@@ -693,7 +675,6 @@ const RequestPrivateLesson = () => {
     return `${year}-${month}-${day}`;
   }
 
-
   const selectRef = useRef(null);
 
   useEffect(() => {
@@ -715,7 +696,7 @@ const RequestPrivateLesson = () => {
     try {
       const endTime = incrementHour(startTime);
       const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/lessons/requestPrivateLesson",
+        "http://localhost:3000/api/lessons/requestPrivateLesson",
         {
           method: "POST",
           headers: {
@@ -853,9 +834,9 @@ const RequestPrivateLesson = () => {
             overflowX: "hidden",
             overflowY: "scroll",
             backgroundColor: "#F2F1F6",
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
           <div className="form-container">
@@ -866,7 +847,7 @@ const RequestPrivateLesson = () => {
                 direction: "rtl",
                 position: "relative",
                 width: "max-content",
-                height: '100%',
+                height: "100%",
                 right: `${step === 0 ? "100%" : "0"}`,
                 // top: '50%'
               }}
@@ -874,18 +855,32 @@ const RequestPrivateLesson = () => {
               <div
                 style={{
                   width: "100vw",
-                  height: '100%',
+                  height: "100%",
                   display: "flex",
                   justifyContent: "center",
                   // marginTop: "1rem",
                 }}
               >
                 <PrivateForm>
-                <div className="line" style={{content:'', width: '100%', height: '3px', backgroundColor:'#e6e5eb', marginBottom: '0.5rem'}}></div>
+                  <div
+                    className="line"
+                    style={{
+                      content: "",
+                      width: "100%",
+                      height: "3px",
+                      backgroundColor: "#e6e5eb",
+                      marginBottom: "0.5rem",
+                    }}
+                  ></div>
 
-                  <h1 style={{ textAlign: "right", color: "black",     marginBlockStart: '0rem',
-    marginBlockEnd: '0.5rem' 
-    }}>
+                  <h1
+                    style={{
+                      textAlign: "right",
+                      color: "black",
+                      marginBlockStart: "0rem",
+                      marginBlockEnd: "0.5rem",
+                    }}
+                  >
                     קביעת אימון פרטי
                   </h1>
 
@@ -937,28 +932,23 @@ const RequestPrivateLesson = () => {
                                   sx={{
                                     "& .MuiInputBase-root": {
                                       color: "black !important",
-                                      
                                     },
                                     "& .MuiInputBase-input": {
                                       color: "black !important",
-
                                     },
                                     "& .MuiButtonBase-root": {
                                       // display: 'none'
                                       // visibility: 'hidden'
                                       color: "black",
-
                                     },
                                     "& .MuiFilledInput-root": {
                                       // display: 'none'
                                       // visibility: 'hidden'
                                       color: "black",
-
                                     },
                                     "& .MuiInputBase-input-MuiOutlinedInput-input":
                                       {
                                         color: "black",
-                                        
                                       },
                                   }}
                                   // }}
@@ -1218,8 +1208,15 @@ const RequestPrivateLesson = () => {
                         ref={studentMailRef}
                       />
                     </Mail>
-                    <div className="line" style={{content:'', width: '100%', height: '3px', backgroundColor:'#e6e5eb'}}></div>
-
+                    <div
+                      className="line"
+                      style={{
+                        content: "",
+                        width: "100%",
+                        height: "3px",
+                        backgroundColor: "#e6e5eb",
+                      }}
+                    ></div>
                   </Line2>
                   <div
                     style={{
@@ -1242,8 +1239,16 @@ const RequestPrivateLesson = () => {
                       <span>המשך</span>
                     </ArrowLeft>
                   </div>
-                  <div className="line" style={{content:'', width: '100%', height: '3px', backgroundColor:'#e6e5eb', marginTop: '0.5rem'}}></div>
-
+                  <div
+                    className="line"
+                    style={{
+                      content: "",
+                      width: "100%",
+                      height: "3px",
+                      backgroundColor: "#e6e5eb",
+                      marginTop: "0.5rem",
+                    }}
+                  ></div>
                 </PrivateForm>
               </div>
 

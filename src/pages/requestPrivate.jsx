@@ -7,7 +7,6 @@ import ClipLoader from "react-spinners/ClipLoader";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useNavigate } from "react-router-dom";
 
-
 export const RequestForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -135,7 +134,7 @@ const StyledSelectContainer = styled.div`
 const RequestPrivateLesson = () => {
   const trainerPhone = useSelector((state) => state.calendar.trainerPhone);
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [boxing, setBoxing] = useState(localStorage.getItem("boxing"));
   const [day, setDay] = useState();
@@ -150,29 +149,23 @@ const RequestPrivateLesson = () => {
   const [thisDayLessons, setThisDayLessons] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
-
-
-  useEffect(()=>{
-    if (trainerPhone === '') {
-      navigate('/signin', {state: {state: '/requestPrivte'}})
+  useEffect(() => {
+    if (trainerPhone === "") {
+      navigate("/signin", { state: { state: "/requestPrivte" } });
     }
-  },[])
+  }, []);
   const getDayLessons = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/lessons/day",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            date: day,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/api/lessons/day", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date: day,
+        }),
+      });
 
       if (!response.ok) {
         setLoading(false);
@@ -239,7 +232,7 @@ const RequestPrivateLesson = () => {
     try {
       const endTime = incrementHour(startTime);
       const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/lessons/requestPrivateLesson",
+        "http://localhost:3000/api/lessons/requestPrivateLesson",
         {
           method: "POST",
           headers: {
@@ -265,10 +258,8 @@ const RequestPrivateLesson = () => {
 
       const data = await response.json();
 
+      openWhatsApp(data, `${trainerPhone}`, "coach");
 
-        openWhatsApp(data, `${trainerPhone}`, 'coach');
-      
- 
       setMessage("אימון נשלח לאישור מאמן");
     } catch (error) {
       console.error("Error sending POST request:", error);
@@ -338,8 +329,7 @@ const RequestPrivateLesson = () => {
     return <p>{message}</p>;
   }
 
-  if (trainerPhone !== '') {
-
+  if (trainerPhone !== "") {
     return (
       <RequestForm onSubmit={handleSubmit}>
         <label htmlFor="date">תאריך</label>
@@ -349,10 +339,10 @@ const RequestPrivateLesson = () => {
           onChange={handleInputChange}
           min={formatDateToYYYYMMDD(new Date())}
           required
-          lang='he'
-          dir='rtl'
+          lang="he"
+          dir="rtl"
         />
-  
+
         {loading ? (
           <ClipLoader />
         ) : (
@@ -374,7 +364,7 @@ const RequestPrivateLesson = () => {
             </div>
           </StyledSelectContainer>
         )}
-  
+
         <label htmlFor="trainer">מאמן:</label>
         <select
           id="trainer"
@@ -385,7 +375,7 @@ const RequestPrivateLesson = () => {
           <option value="David">David</option>
           <option value="Eldad">Eldad</option>
         </select>
-  
+
         <label htmlFor="studentName">שם מלא:</label>
         <input
           type="text"
@@ -394,7 +384,7 @@ const RequestPrivateLesson = () => {
           onChange={(e) => setStudentName(e.target.value)}
           required
         />
-  
+
         <label htmlFor="studentPhone">מספר פלאפון ליצירת קשר:</label>
         <input
           type="text"
@@ -403,7 +393,7 @@ const RequestPrivateLesson = () => {
           onChange={(e) => setStudentPhone(e.target.value)}
           required
         />
-  
+
         <label htmlFor="studentMail">כתובת מייל מלאה:</label>
         <input
           type="email"
@@ -412,7 +402,7 @@ const RequestPrivateLesson = () => {
           onChange={(e) => setStudentMail(e.target.value)}
           required
         />
-  
+
         <section
           className="whatsapp"
           style={{
@@ -450,8 +440,6 @@ const RequestPrivateLesson = () => {
       </RequestForm>
     );
   }
-
- 
 };
 
 export default RequestPrivateLesson;

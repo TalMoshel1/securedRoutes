@@ -33,7 +33,6 @@ const RequestForm = styled.section`
   label {
     width: 100%;
     text-align: center;
-    
   }
 
   input,
@@ -57,13 +56,12 @@ const RequestForm = styled.section`
 `;
 
 const Main = styled.main`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const SetGroupLesson = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -86,7 +84,7 @@ const SetGroupLesson = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [thisDayLessons, setThisDayLessons] = useState([]);
 
-  const [displayPage, setDisplayPage] = useState(false)
+  const [displayPage, setDisplayPage] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -134,27 +132,24 @@ const SetGroupLesson = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    e.stopPropagation(); 
+    e.stopPropagation();
     const { repeatMonth, ...formDataToSend } = formData;
 
     const repeatEnd = repeatEndDate(formData.day, parseInt(repeatMonth, 10));
 
     try {
       const token = JSON.parse(localStorage.getItem("boxing"))?.token;
-      const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/lessons/group",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `${token}`,
-          },
-          body: JSON.stringify({
-            ...formDataToSend,
-            repeatEndDate: repeatEnd,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/api/lessons/group", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `${token}`,
+        },
+        body: JSON.stringify({
+          ...formDataToSend,
+          repeatEndDate: repeatEnd,
+        }),
+      });
 
       const data = await response.json();
       setMessage(data.message || "Success");
@@ -181,42 +176,6 @@ const SetGroupLesson = () => {
     }));
   }, [day]);
 
-  const authenticateRequest = async () => {
-    try {
-      const token = JSON.parse(localStorage.getItem("boxing"))?.token;
-      if (!token) throw new Error("No token found");
-      const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/auth/verify-token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error(
-          `HTTP error! Status: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      if (data.message !== "Token is valid") {
-        navigate("/signin", { state: { state: "/setgrouplesson" } });
-      } else {
-        setDisplayPage(true)
-      }
-    } catch (error) {
-      console.error("Error verifying token:", error);
-      navigate("/signin", { state: { state: "/setgrouplesson" } });
-    }
-  };
-
-  useEffect(() => {
-    authenticateRequest();
-  }, []);
-
   if (message) {
     return (
       <Main>
@@ -228,7 +187,14 @@ const SetGroupLesson = () => {
 
   if (displayPage) {
     return (
-      <RequestForm onSubmit={handleSubmit} style={{left:'50%', transform:'translate(-50%)', marginBottom: '1rem'}}>
+      <RequestForm
+        onSubmit={handleSubmit}
+        style={{
+          left: "50%",
+          transform: "translate(-50%)",
+          marginBottom: "1rem",
+        }}
+      >
         <FormItemContainer>
           <label>אימון חוזר</label>
           <input
@@ -237,7 +203,7 @@ const SetGroupLesson = () => {
             checked={formData.repeatsWeekly}
             onChange={handleChange}
           />
-  
+
           {formData.repeatsWeekly && (
             <FormItemContainer className="monthes-container">
               <label>לכמה חודשים:</label>
@@ -279,7 +245,7 @@ const SetGroupLesson = () => {
             required
           />
         </FormItemContainer>
-  
+
         <FormItemContainer>
           <label>תיאור האימון:</label>
           <textarea
@@ -313,14 +279,13 @@ const SetGroupLesson = () => {
             required={formData.repeatsWeekly}
           />
         </FormItemContainer>
-  
+
         <button type="submit" onClick={handleSubmit}>
           צור אימון
         </button>
       </RequestForm>
     );
   }
-
 };
 
 const formatDateToYYYYMMDD = (date) => {

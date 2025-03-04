@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { openWhatsApp } from "../functions/sendWhatsApp";
-import { useKickOut } from "../hooks/KickOut";
-import { removeCookie } from "../utils/RemoveCookie";
+import { openWhatsApp } from "../../utils/sendWhatsApp";
+import { VerifyTokenContext } from "../../context/verifyTokenContext";
 
 const ApprovalLink = () => {
   const { lessonId } = useParams();
@@ -11,26 +10,23 @@ const ApprovalLink = () => {
   const [isApproved, setIsApproved] = useState(false);
   const [boxing, setBoxing] = useState(localStorage.getItem("boxing"));
   const [approvedLesson, setApprovedLesson] = useState();
-  const { navigateToSignIn } = useKickOut();
+useContext(VerifyTokenContext);
 
   useEffect(() => {
     const sendPostRequest = async () => {
       try {
-        const token = JSON.parse(boxing)?.token;
         const response = await fetch(
-          `https://appointment-back-qd2z.onrender.com/api/lessons/approveLink/${lessonId}`,
+          `http://localhost:3000/api/lessons/approveLink/${lessonId}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              authorization: token,
             },
+            credentials: "include",
           }
         );
 
         if (!response.ok) {
-          removeCookie();
-          navigateToSignIn();
           throw new Error(
             `HTTP error! Status: ${response.status} ${response.statusText}`
           );

@@ -18,8 +18,8 @@ const Item = styled.li`
   cursor: pointer;
   height: 100%;
 
-  ${({ isActive }) =>
-    isActive &&
+  ${({ isactive }) =>
+    isactive &&
     `
     border-top: 1px solid #00d180 !important;
     color: #00d180;
@@ -59,23 +59,30 @@ const MenuList = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+
   // Function to handle navigation
   const handleClick = (endpoint) => {
+    console.log('Navigating to:', `/${endpoint}`);
     navigate(`/${endpoint}`);
   };
 
   const isCalendarActive = location.pathname.endsWith("/calendar");
   const isSetGroupLessonActive = location.pathname.endsWith("/setgrouplesson");
+  const isSignInActive = location.pathname.endsWith("/signin");
 
   return (
     <StyledMenuList>
-      <Item onClick={() => handleClick("calendar")} isActive={isCalendarActive}>
+      <Item onClick={() => handleClick("calendar")} isactive={isCalendarActive}>
         <h2 style={{ fontSize: "1rem", width: '100%' }}>מערכת שעות</h2>
       </Item>
 
 
-      <Item onClick={() => handleClick("setgrouplesson")} isActive={isSetGroupLessonActive}>
+      <Item onClick={() => handleClick("setgrouplesson")} isactive={isSetGroupLessonActive}>
         <h2 style={{ fontSize: "1rem", padding: "1rem", width:'100%' }}>קביעת אימונים שבועיים</h2>
+      </Item>
+
+      <Item onClick={() => handleClick("signin")} isactive={isSignInActive}>
+        <h2 style={{ fontSize: "1rem", padding: "1rem", width:'100%' }}>התחברות</h2>
       </Item>
     </StyledMenuList>
   );

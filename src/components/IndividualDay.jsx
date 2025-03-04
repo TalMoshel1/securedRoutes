@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Modal from "./Modal";
 import DetailsLesson from "./detailsLesson";
 import DeleteLesson from "./deleteLesson";
 import CloseIcon from "@mui/icons-material/Close";
-import InfoIcon from "@mui/icons-material/Info";
 import styled from "styled-components";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import CelebrationIcon from "@mui/icons-material/Celebration";
+import { VerifyTokenContext } from "../context/verifyTokenContext";
 
 const CloseButton = styled.button`
   background: none;
@@ -79,7 +79,9 @@ export const IndividualDay = ({ displayedData }) => {
   const [modalType, setModalType] = useState("");
   const [currentLesson, setCurrentLesson] = useState(null);
   const [lessonIdToHide, setLessonIdToHide] = useState([]);
+  const {isVerified} = useContext(VerifyTokenContext);
 
+  
 
 
   const displayLessons = () => {
@@ -179,7 +181,7 @@ export const IndividualDay = ({ displayedData }) => {
                       {l.startTime} - {l.endTime}
                     </span>
                     <ListItem key={index}>
-                      {user?.user?.role === "admin" && (
+                      {(user?.user?.role === "admin" && isVerified === true ) && (
                         <CloseButton style={{fill: "black !important"}} onClick={() => handleOpenDeleteModal(l)}>
                           <CloseIcon style={{fill: "black !important"}}/>
                         </CloseButton>
@@ -210,7 +212,7 @@ export const IndividualDay = ({ displayedData }) => {
                               <PermIdentityIcon />
                               מאמן: {l.trainer}
                             </span>
-                            {l.type === "private" && (
+                            {(l.type === "private" && isVerified === true) &&(
                               <span
                                 style={{
                                   direction: "rtl",
@@ -248,7 +250,7 @@ export const IndividualDay = ({ displayedData }) => {
                       {l.startTime} - {l.endTime}
                     </span>
                     <ListItem key={index}>
-                      {user?.user?.role === "admin" && (
+                      {(user?.user?.role === "admin" &&  isVerified === true) && (
                         <CloseButton  style={{fill: "black !important"}} onClick={() => handleOpenDeleteModal(l)}>
                           <CloseIcon style={{fill: "black !important"}} />
                         </CloseButton>

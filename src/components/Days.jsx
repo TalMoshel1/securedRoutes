@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Day from "./Day.jsx";
-import { compareDates, formatDate } from "../functions/compareTime.js";
+import { compareDates, formatDate } from "../utils/compareTime.js";
 import "../css-components/Days.css";
 import ClipLoader from "react-spinners/ClipLoader";
 import styled from "styled-components";
-import { renderDays } from "../functions/renderDays.js";
+import { renderDays } from "../utils/renderDays.js";
 import IndividualDay from "./IndividualDay.jsx";
-import { getStartOfWeek } from "../functions/getStartOfTheWeek.js";
+import { getStartOfWeek } from "../utils/getStartOfTheWeek.js";
 import { current } from "@reduxjs/toolkit";
 
 const Days = () => {
@@ -19,18 +19,16 @@ const Days = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [todayDay, setDayToday] = useState(null);
 
-
   useEffect(() => {
     const sendPostRequest = async () => {
       setIsDisplay(false);
       try {
-        const response = await fetch("https://appointment-back-qd2z.onrender.com/api/lessons/week", {
+        const response = await fetch("http://localhost:3000/api/lessons/week", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-
             startOfWeek: new Date(currentDate),
           }),
         });
@@ -87,12 +85,10 @@ const Days = () => {
 
     const lessonsForDay = fetchedLessons.filter((lesson) => {
       const lessonDayFormated = formatDate(lesson.day);
-      return dayDisplayedDate === lessonDayFormated;  
+      return dayDisplayedDate === lessonDayFormated;
     });
 
-
     return setLessonsToDisplay(lessonsForDay);
-
   };
 
   const SpinnerContainer = styled.div`
@@ -101,7 +97,6 @@ const Days = () => {
     left: 50%;
     transform: translate(-50%, -50%);
   `;
-  
 
   if (isDisplay) {
     return (
@@ -144,7 +139,7 @@ const Days = () => {
           })}
         </div>
         {/* {lessonsToDisplay.length > 0 ? ( */}
-          <IndividualDay displayedData={lessonsToDisplay} />
+        <IndividualDay displayedData={lessonsToDisplay} />
       </>
     );
   } else {

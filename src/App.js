@@ -1,11 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import Calendar from "./pages/Calendar";
 import DeleteLesson from "./components/deleteLesson";
-import DetailsLesson from './components/detailsLesson';
+import DetailsLesson from "./components/detailsLesson";
 import Modal from "./components/Modal";
-import ApproveLink from "./pages/ApprovalLink";
+import ApproveLink from "./features/ApprovalLink/Page.jsx";
 import "./App.css";
 import { useSelector } from "react-redux";
 import FormContainer from "./components/formContainer";
@@ -14,11 +20,21 @@ import { MenuProvider } from "./context/useMenu";
 import styled from "styled-components";
 import DateSliderDays from "./components/DateSliderDays";
 import DateSliderWeeks from "./components/DateSliderWeeks";
-import Private2 from './pages/Private2';
+import Private2 from "./pages/Private2";
 import Header from "./New UI/Header";
 import Group2 from "./pages/Group2";
-import  {AuthenticationProvider}  from "./context/useAuthenticate.jsx";
-import { AuthContext } from "./context/useAuthenticate.jsx";
+import { AuthenticationProvider } from "./context/useGetToken.jsx";
+import {
+  VerifyTokenContext,
+  VerifyTokenProvider,
+} from "./context/verifyTokenContext.jsx";
+import {TokenErrorContext, TokenErrorProvider} from "./context/tokenErrorContext";
+import SignIn from "./pages/SignIn.jsx";
+import { Helmet } from "react-helmet";
+import calendarIcon from "./assets/calendarPage.png";
+import groupIcon from "./assets/groupPage.png";
+import RequireLoginAlert from "./components/requireLoginAlert.jsx";
+
 
 function App() {
   const theme = useSelector((state) => state.theme);
@@ -27,25 +43,30 @@ function App() {
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <MenuProvider>
-          <AuthenticationProvider>
-          <AppContent />
-          </AuthenticationProvider>
+          <VerifyTokenProvider>
+            <AuthenticationProvider>
+              <TokenErrorProvider>
+              <AppContent />
+              </TokenErrorProvider>
+            </AuthenticationProvider>
+          </VerifyTokenProvider>
         </MenuProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
 }
 
-  function  AppContent() {
+function AppContent() {
   const [isMenuOpen, toggleMenu] = useState(false);
-  const {boxing} = useContext(AuthContext)
-  const isTokenValid = boxing 
+  const { isVerified } = useContext(VerifyTokenContext);
+  const {isError} = useContext(TokenErrorContext);
+  const navigate = useNavigate();
 
-  console.log('isTokenValid: ', isTokenValid)
-
-
-
-
+  useEffect(() => {
+    if (isVerified === false) {
+      // navigate("/signin");
+    }
+  }, [isVerified]);
 
   const handleToggleMenu = () => {
     toggleMenu(!isMenuOpen);
@@ -64,13 +85,15 @@ function App() {
       <Header />
       <MenuList isMenuOpen={isMenuOpen} handleToggleMenu={handleToggleMenu} />
 
-      {(isDeleteLessonModalOpen && isTokenValid) && (
+      {isError && <RequireLoginAlert />}
+
+      {isDeleteLessonModalOpen && isVerified && (
         <Modal type="delete">
           <DeleteLesson />
         </Modal>
       )}
 
-      {(isDetailsLessonModalOpen && isTokenValid) && (
+      {isDetailsLessonModalOpen && isVerified && (
         <Modal type="details">
           <DetailsLesson />
         </Modal>
@@ -82,33 +105,87 @@ function App() {
         <Route
           path="/calendar"
           element={
-            <StyledDisabledWrapper
-              isDisabled={isDeleteLessonModalOpen || isDetailsLessonModalOpen}
-            >
-              <Calendar />
-            </StyledDisabledWrapper>
+            <>
+              <Helmet>
+                <title>מערכת שעות</title>
+                <meta
+                  name="description"
+                  content="see private training, group training and cancel training"
+                />
+                <link
+                  rel="icon"
+                  type="image/png"
+                  href={calendarIcon}
+                  sizes="16x16"
+                />
+              </Helmet>
+
+              <StyledDisabledWrapper
+                isDisabled={isDeleteLessonModalOpen || isDetailsLessonModalOpen}
+              >
+                <Calendar />
+              </StyledDisabledWrapper>
+            </>
           }
         />
-          {isTokenValid ? <Route
+        <Route
           path="/setgrouplesson"
           element={
             <FormContainer>
-              <Group2 />
+              {isVerified && (
+                <>
+                  <Helmet>
+                    <title>צור אימון קבוצתי</title>
+                    <meta name="description" content="Set a Group Lesson" />
+                    <link
+                      rel="icon"
+                      type="image/png"
+                      href={groupIcon}
+                      sizes="16x16"
+                    />
+                  </Helmet>
+                  <Group2 />
+                </>
+              )}
+
+              {isVerified === false && (
+                <>
+                  <Helmet>
+                    <title>אין גישה לעמוד זה</title>
+                    <meta name="description" content="No access to this page" />
+                  </Helmet>
+                  <h1>403 error</h1>
+                </>
+              )}
             </FormContainer>
           }
-        /> : <Route
-        path="/setgrouplesson"
-        element={
-          <FormContainer>
-            <strong style={{textAlign:'center'}}>Error 403<br/>
-              You dont have permission to this page</strong>
-          </FormContainer>
-        }
-      />
-      
-      }
+        />
 
-        <Route path="/approveLink/:lessonId" element={<ApproveLink />} />
+        <Route
+          path="/approveLink/:lessonId"
+          element={
+            isVerified ? (
+              <>
+                <Helmet>
+                  <title>אישור אימון פרטי</title>
+                  <meta
+                    name="description"
+                    content="Aproove request for private training"
+                  />
+                </Helmet>
+                <ApproveLink />
+              </>
+            ) : (
+              <>
+                <Helmet>
+                  <title>אין גישה לעמוד זה</title>
+                  <meta name="description" content="No access to this page" />
+                </Helmet>
+                <h1>403 error</h1>
+              </>
+            )
+          }
+        />
         <Route
           path="/requestPrivte"
           element={
@@ -120,7 +197,8 @@ function App() {
         <Route path="/datesliderdays" element={<DateSliderDays />} />
         <Route path="/datesliderweeks" element={<DateSliderWeeks />} />
 
-        {/* Only redirect to /calendar if no other route matches */}
+        <Route path="/signin" element={<SignIn />} />
+
         <Route path="*" element={<Navigate to="/calendar" replace />} />
       </Routes>
     </VerticalContainer>
@@ -142,7 +220,7 @@ export const StyledDisabledWrapper = styled(DisabledWrapper)`
 `;
 
 const VerticalContainer = styled.div`
-  flex: 1; 
+  flex: 1;
   display: flex;
   max-width: 100vw;
   flex-direction: column;

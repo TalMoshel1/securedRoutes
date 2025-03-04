@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useDispatch, useSelector } from "react-redux";
-import { setTrainerPhone } from "../redux/calendarSlice";
-
+import { AuthContext } from "../context/useGetToken";
+import { VerifyTokenContext } from "../context/verifyTokenContext.jsx";
 const LoginContainer = styled.main`
   position: absolute;
   top: 50%;
@@ -19,14 +18,11 @@ const LoginContainer = styled.main`
     padding-bottom: 1rem;
     padding-left: 2rem;
     padding-right: 2rem;
-
   }
 
   h2 {
     margin-block-start: 0em;
     margin-block-end: 0.41rem;
-
-
   }
 
   input {
@@ -37,10 +33,8 @@ const LoginContainer = styled.main`
     border: none;
     border-radius: 20px;
     font-size: 1rem;
-    direction:rtl;
+    direction: rtl;
   }
-
-
 
   .input-group {
     display: flex;
@@ -52,119 +46,62 @@ const LoginContainer = styled.main`
   button {
     font-size: 1rem;
     height: 2.35rem;
-     border-radius: 20px;
+    border-radius: 20px;
     background-color: #e6e5eb !important;
     color: black !important;
   }
 
   label {
-  font-size:1.25rem;
+    font-size: 1.25rem;
   }
 `;
 
 const SignIn = () => {
-  const [boxing, setBoxing] = useState(localStorage.getItem("boxing"));
-  const trainerPhone = useSelector((state) => state.calendar.trainerPhone);
   const [loading, setLoading] = useState(false);
-  const [phone, setPhone] = useState("");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { signIn } = useContext(AuthContext);
+  const { verify } = useContext(VerifyTokenContext);
 
-  const sendPostRequest = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/auth/signin",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: "demouser4@gmail.com",
-            password: "987687765",
-          }),
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error(
-          `HTTP error! Status: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      localStorage.setItem(
-        "boxing",
-        JSON.stringify({ token: data.data.token, user: data.data.user })
-      );
-      setBoxing(
-        JSON.stringify({ token: data.data.token, user: data.data.user })
-      );
-      dispatch(setTrainerPhone(phone));
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error("Error sending POST request:", error);
-    }
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    sendPostRequest();
-  };
-
-  const authenticateRequest = async () => {
-    setLoading(true);
-    try {
-      const token = JSON.parse(boxing)?.token;
-      if (!token) throw new Error("No token found");
-      const response = await fetch(
-        "https://appointment-back-qd2z.onrender.com/api/auth/verify-token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error(
-          `HTTP error! Status: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      setLoading(false);
-      if (data.message === "Token is valid") {
-        if (location.state?.state) {
-          navigate(location.state?.state);
-        }
+      const isSuccess = await signIn();
+      if (isSuccess === "success") {
+        await verify();
+        navigate("/");
+      } else {
+        console.error("Login failed");
       }
     } catch (error) {
+      console.error("Error during login:", error);
+    } finally {
       setLoading(false);
-      console.error("Error verifying token:", error);
     }
   };
-
-  useEffect(() => {
-    if (boxing) {
-      authenticateRequest();
-    }
-  }, [boxing]);
 
   return (
     <LoginContainer className="login-container">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => handleLogin(e)}>
         <h2>הכנס כמנהל</h2>
-        <button type="submit" style={{ width: "fit-content", border: 'none',paddingRight:'0.5rem',paddingLeft:'0.5rem' }}>
+        <LoginButton type="submit" disabled={loading}>
           {loading ? <ClipLoader size={9} /> : "התחברות"}
-        </button>
+        </LoginButton>
       </form>
     </LoginContainer>
   );
 };
+
+const LoginButton = styled.button`
+  width: fit-content;
+  border: none;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  font-size: 1rem;
+  height: 2.35rem;
+  border-radius: 20px;
+  background-color: #e6e5eb !important;
+  color: black !important;
+`;
 
 export default SignIn;
