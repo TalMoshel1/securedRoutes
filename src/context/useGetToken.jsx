@@ -2,10 +2,10 @@ import React, { createContext } from "react";
 
 export const AuthContext = createContext();
 
-export const AuthenticationProvider = ({ children }) => {
+export const AuthorizationProvider = ({ children }) => {
   const signIn = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/auth/signin", {
+      const response = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -23,7 +23,6 @@ export const AuthenticationProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      localStorage.setItem("boxing", JSON.stringify({ user: data.user }));
       if (data.success === "success") {
         return "success";
       } else {

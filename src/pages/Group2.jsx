@@ -1,27 +1,20 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import { toggleSetGroupModal } from "../redux/calendarSlice.js";
 import { repeatEndDate } from "../utils/repeatEndDate.js";
-import { Box } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { StyledBox } from "./Private2.jsx";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { StyledBox } from "./Group/style-component.jsx";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import * as styledGroup from "../groupHelpers/styled-component.js";
+import * as styledGroup from "./Group/style-component.jsx";
 import ClipLoader from "react-spinners/ClipLoader.js";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { removeCookie } from "../utils/removeCookie.js";
-import { useKickOut } from "../hooks/KickOut.jsx";
-import RequireLoginAlert from "../components/requireLoginAlert.jsx";
-import { VerifyTokenContext } from "../context/verifyTokenContext.jsx";
-import { TokenErrorContext } from "../context/tokenErrorContext.jsx";
+import CustonAlert from "../components/CustomAlert.jsx";
+import { ErrorContext } from "../context/ErrorContext.jsx";
 
 const Group2 = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     trainer: "דוד",
@@ -45,12 +38,9 @@ const Group2 = () => {
   const startTimeRef = useRef(null);
   const endTimeRef = useRef(null);
   const timePattern = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
-  const {setError} = useContext(TokenErrorContext); 
+  const { setErrorString } = useContext(ErrorContext);
 
   const textColor = formData.repeatsWeekly ? "black" : "grey";
-
-  const { navigateToLogin } = useKickOut();
-  const {isVerified, setIsVerified} = useContext(VerifyTokenContext);
 
   const handleDisplayMonth = () => {
     if (formData.repeatsWeekly && !showMonthsOptions) {
@@ -154,7 +144,7 @@ const Group2 = () => {
 
     try {
       setDisplayPage(false);
-      const response = await fetch("http://localhost:3000/api/lessons/group", {
+      const response = await fetch("/api/lessons/group", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -168,19 +158,27 @@ const Group2 = () => {
         }),
       });
       const data = await response.json();
-      if (!data.message) {
-        setDisplayPage(true);
+      if (
+        data.message === "Token is missing" ||
+        data.message === "Token is invalid or expired" ||
+        data.message === "Unauthorized: Insufficient role"
+      ) {
         removeCookie();
-        setError()
-        // navigateToLogin();
-        // return navigate("/calendar");
+        setErrorString("שגיאה באימות!");
       }
-      setMessage(data.message);
-      handleCloseCreateGroupLesson();
+      if (data.message === "קבוע לך שיעור במועד זה") {
+        setErrorString(data.message);
+      }
+
+      if (data.message === "כבר קבועים שיעורים באחד ממועדים אלו") {
+        setErrorString(data.message);
+      }
+      setDisplayPage(true);
     } catch (error) {
       console.error("Error creating group lesson:", error);
-      setMessage("Error");
+      setErrorString("Error");
       handleCloseCreateGroupLesson();
+      setDisplayPage(true);
     }
   };
 
@@ -366,25 +364,12 @@ const Group2 = () => {
                   }}
                   inputRef={dayRef}
                   aria-label="תאריך האימון"
-                  //   open={isDateOpen}
-                  //   onClose={() => setIsDateOpen(false)}
                   slotProps={{
                     textField: {
-                      // onClick: () => setIsDateOpen((prev) => true),
-                      // onKeyDown: (event) => setIsDateOpen((prev) => true),
                       placeholder: "תאריך",
                       sx: { color: "black" },
                     },
-                    //   popper: {
-                    //     onBlur: () => {
-                    //       setIsDateOpen(false);
-                    //     },
-                    // }
                   }}
-                  //   slots={{
-                  //     openPickerButton: () => null
-                  //   }}
-                  //   renderInput={(params) => <TextField {...params} />}
                 />
               </StyledBox>
             </LocalizationProvider>
@@ -491,7 +476,7 @@ const Group2 = () => {
           }}
         ></div>
       </styledGroup.RequestForm>
-            {isVerified === false && <RequireLoginAlert/>}
+      <CustonAlert />
     </>
   );
 };

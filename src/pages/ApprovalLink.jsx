@@ -1,36 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { openWhatsApp } from "../functions/sendWhatsApp";
+import { openWhatsApp } from "../utils/sendWhatsApp.js";
 import { useKickOut } from "../hooks/KickOut";
-import { removeCookie } from "../utils/RemoveCookie";
+import { removeCookie } from "../utils/removeCookie.js";
+import CustonAlert from "../components/CustomAlert.jsx";
+import { ErrorContext } from "../context/ErrorContext.jsx";
+import { AdminContext } from "../context/AdminContext.jsx";
 
 const ApprovalLink = () => {
   const { lessonId } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
   const [isApproved, setIsApproved] = useState(false);
-  const [boxing, setBoxing] = useState(localStorage.getItem("boxing"));
+  // const {isVerified} = useContext(AdminContext)
   const [approvedLesson, setApprovedLesson] = useState();
-  const { navigateToSignIn } = useKickOut();
+  const { setErrorString } = useContext(ErrorContext);
 
   useEffect(() => {
     const sendPostRequest = async () => {
       try {
-        const token = JSON.parse(boxing)?.token;
-        const response = await fetch(
-          `https://appointment-back-qd2z.onrender.com/api/lessons/approveLink/${lessonId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: token,
-            },
-          }
-        );
+        const response = await fetch(`/api/lessons/approveLink/${lessonId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        console.log("ApproveLink: ", response.ok);
 
         if (!response.ok) {
           removeCookie();
-          navigateToSignIn();
+          setErrorString("שגיאה באימות!");
           throw new Error(
             `HTTP error! Status: ${response.status} ${response.statusText}`
           );
@@ -50,7 +49,7 @@ const ApprovalLink = () => {
     if (lessonId) {
       sendPostRequest();
     }
-  }, [lessonId, boxing]);
+  }, [lessonId]);
 
   if (isApproved) {
     return (
@@ -61,6 +60,7 @@ const ApprovalLink = () => {
           justifyContent: "center",
           alignItems: "center",
           fontSize: "1rem",
+          flexGrow: "1",
         }}
       >
         <p>
@@ -85,6 +85,7 @@ const ApprovalLink = () => {
             שלח תזכורת למתאמן
           </button>
         )}
+        <CustonAlert />
       </div>
     );
   }

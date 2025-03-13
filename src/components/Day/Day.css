@@ -1,0 +1,7 @@
+.day {
+    all:unset;
+    text-align: center;
+    box-sizing: border-box;
+    /* width:max-content; */
+  }
+  
