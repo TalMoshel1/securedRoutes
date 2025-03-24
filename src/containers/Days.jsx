@@ -17,11 +17,13 @@ const Days = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [todayDay, setDayToday] = useState(null);
 
+  console.log('rendered: ')
+
   useEffect(() => {
     const sendPostRequest = async () => {
       setIsDisplay(false);
       try {
-        const response = await fetch("/api/lessons/week", {
+        const response = await fetch("http://localhost:3000/api/lessons/week", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -89,6 +91,8 @@ const Days = () => {
     return setLessonsToDisplay(lessonsForDay);
   };
 
+
+
   if (isDisplay) {
     return (
       <>
@@ -133,7 +137,9 @@ const Days = () => {
         <IndividualDay displayedData={lessonsToDisplay} />
       </>
     );
-  } else {
+  } 
+  
+  else {
     return (
       <SpinnerContainer>
         <ClipLoader />

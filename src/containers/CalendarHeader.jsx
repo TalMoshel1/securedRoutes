@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {  incrementDate, setMonth } from "../redux/calendarSlice.js";
+import {  incrementDate, setMonth, incrementRenderedDays, incrementWeekCounter, decrementWeekCounter } from "../redux/calendarSlice.js";
 import { renderDays } from "../utils/renderDays.js";
 import { formatThreeLettersMonthAndDaysToHebrew } from "../utils/formatThreeLettersMonthAndDaysToHebrew.js";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -23,6 +23,8 @@ const CalendarHeader = () => {
   const handleNext = () => {
     if (view === "week") {
       dispatch(incrementDate(7));
+      dispatch(incrementWeekCounter())
+      dispatch(incrementRenderedDays(7))
     } else {
       dispatch(incrementDate(1));
     }
@@ -33,6 +35,9 @@ const CalendarHeader = () => {
       dispatch(setMonth(-1));
     } else if (view === "week") {
       dispatch(incrementDate(-7));
+      dispatch(decrementWeekCounter())
+      dispatch(incrementRenderedDays(-7))
+
     } else {
       dispatch(incrementDate(-1));
     }
@@ -57,6 +62,7 @@ const CalendarHeader = () => {
     monthInHebrew !== startMonthInHebrew
       ? `${startMonthInHebrew} - ${monthInHebrew} ${endDate[3]}`
       : `${startMonthInHebrew} ${endDate[3]}`;
+
 
   return (
     <Header>

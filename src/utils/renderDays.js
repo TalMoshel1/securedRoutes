@@ -1,5 +1,6 @@
 export function renderDays(currentDate, view) {
 
+
     const startOfWeek = (date) => {
       const day = date.getDay();
       const diff = date.getDate() - day;
@@ -28,7 +29,7 @@ export function renderDays(currentDate, view) {
     if (view === "week") {
       startDate = startOfWeek(currentDate);
       for (let i = 0; i < 7; i++) {
-        days.push(formatDate(addDays(startDate, i)));
+        days.push (formatDate(addDays(startDate, i)));
       }
     } if (view === 'month') {
       for (let i = 0; i < 30; i++) {

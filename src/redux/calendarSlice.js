@@ -9,6 +9,7 @@ const startOfWeek = (date) => {
 const initialState = {
   trainerPhone: '',
   currentDate: new Date().toISOString(),
+  nextFetchForLessonsWhen: new Date(Date.now() + 28 * 86400000).toISOString(),
   view: 'week',
   isPrivateModalOpen: false,
   privateModalData: null,
@@ -18,15 +19,34 @@ const initialState = {
   deleteLessonModalData: null,
   isDetailsLessonModalOpen: false,
   detailsLessonModalData: null,
-
-
-  lessonsToDisplay: null
+  lessonsToDisplay: null,
+  renderedDaysDate: new Date().toISOString(),
+  fourWeeksCounter: {count:0},
+  triggerRefetch: false
 };
 
 const calendarSlice = createSlice({
   name: 'calendar',
   initialState,
   reducers: {
+    incrementWeekCounter: (state, action) => {
+      if (state.fourWeeksCounter.count === 3) {
+          state.fourWeeksCounter.count = 0; // Modify the draft
+          return; // Important: return undefined.
+      }
+      state.fourWeeksCounter.count = state.fourWeeksCounter.count + 1;
+  },
+  
+  decrementWeekCounter: (state, action) => {
+    if (state.fourWeeksCounter.count === 0) {
+      state.triggerRefetch = true
+        return; 
+    }
+    state.fourWeeksCounter.count = state.fourWeeksCounter.count - 1;
+},
+    setNextFetchForLessonsWhen: (state, action) => {
+      state.nextFetchForLessonsWhen = action.payload
+    },
     setTrainerPhone:(state,action) => {
       state.trainerPhone = action.payload
 
@@ -40,6 +60,23 @@ const calendarSlice = createSlice({
       const newDate = new Date(date.getTime() + days * 86400000)
       const newDate2 = startOfWeek(newDate)
       state.currentDate = `${newDate2}`
+    },
+    decrementDate: (state, action) => {
+      const days = action.payload;
+      const date = new Date(state.currentDate)
+      const newDate = new Date(date.getTime() + days * 86400000)
+      const newDate2 = startOfWeek(newDate)
+      state.currentDate = `${newDate2}`
+      if (state.fourWeeksCounter === 0 ) {
+        state.fetchForCurrentDateAgain = true
+      }
+    },
+    incrementRenderedDays: (state, action) => {
+      const days = action.payload;
+      const date = new Date(state.renderedDaysDate)
+      const newDate = new Date(date.getTime() + days * 86400000)
+      const newDate2 = startOfWeek(newDate)
+      state.renderedDaysDate = `${newDate2}`
     },
     setLessonsToDisplay: (state, action) => {
       if (action.payload.type === 'deleteDisplayedLesson') {
@@ -65,9 +102,12 @@ const calendarSlice = createSlice({
     toggleSetDetailsLessonModal(state, action) {
       state.isDetailsLessonModalOpen = !state.isDetailsLessonModalOpen;
       state.detailsLessonModalData = action.payload ? action.payload : '';
+    },
+    setTriggerRefetch(state, action) {
+      state.triggerRefetch = !state.triggerRefetch
     }
   },
 });
 
-export const { setView, incrementDate, setMonth, toggleSetPrivateModal, toggleSetGroupModal, toggleSetDeleteLessonModal, setLessonsToDisplay, toggleSetDetailsLessonModal, setTrainerPhone} = calendarSlice.actions;
+export const { setView, incrementDate, setMonth, toggleSetPrivateModal, toggleSetGroupModal, toggleSetDeleteLessonModal, setLessonsToDisplay, toggleSetDetailsLessonModal, setTrainerPhone, nextFetchForLessonsWhen, setNextFetchForLessonsWhen, incrementRenderedDays, incrementWeekCounter, decrementWeekCounter, triggerRefetch, setTriggerRefetch} = calendarSlice.actions;
 export default calendarSlice.reducer;

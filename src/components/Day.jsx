@@ -39,7 +39,9 @@ const Day = ({ date, lessons, isSelected, onSelectDate, isToday }) => {
           className="date"
           tabIndex={0}
           onKeyDown={(e) => {
+            console.log('e: ',e)
             if (e.key === "Enter" || e.key === " ") {
+              console.log('e: ', e)
               onSelectDate();
             }
           }}

@@ -35,14 +35,17 @@ const DeleteLesson = ({
 
   const deleteLesson = async (lessonId) => {
     try {
-      const response = await fetch(`/api/lessons/${lessonId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ deleteAll: isDeleteAll }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/lessons/${lessonId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ deleteAll: isDeleteAll }),
+          credentials: "include",
+        }
+      );
       console.log(response.ok);
       if (!response.ok) {
         removeCookie("token");

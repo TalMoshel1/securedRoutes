@@ -144,7 +144,7 @@ const Group2 = () => {
 
     try {
       setDisplayPage(false);
-      const response = await fetch("/api/lessons/group", {
+      const response = await fetch("http://localhost:3000/api/lessons/group", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

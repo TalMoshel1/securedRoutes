@@ -17,15 +17,16 @@ const ApprovalLink = () => {
   useEffect(() => {
     const sendPostRequest = async () => {
       try {
-        const response = await fetch(`/api/lessons/approveLink/${lessonId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
-
-        console.log("ApproveLink: ", response.ok);
+        const response = await fetch(
+          `http://localhost:3000/api/lessons/approveLink/${lessonId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
         if (!response.ok) {
           removeCookie();
