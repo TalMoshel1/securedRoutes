@@ -36,20 +36,21 @@ const Days = () => {
   const [todayDay, setDayToday] = useState(null);
   const [begginingOfWeek, setBegginingOfWeek] = useState();
 
+  useEffect(() => {
+    console.log("fetchedLessons: ", fetchedLessons);
+  }, [fetchedLessons]);
 
   useEffect(() => {
     if (isToday(currentDate) || !fourWeeksCounter.count) {
-      return setFetchApi(true);
+      setFetchApi(true);
     }
     if (fourWeeksCounter.count) {
       const newDays = renderDays(new Date(renderedDaysDate), "week");
-      console.log("newDays: ", newDays);
       setDaysState((prev) => {
         return JSON.stringify(prev) === JSON.stringify(newDays)
           ? prev
           : newDays;
       });
-
       return setFetchApi(false);
     }
     // else if (isCurrentSmallerThanNextFetch(currentDate, next4weeks)) {
@@ -111,10 +112,16 @@ const Days = () => {
         }
 
         const data = await response.json();
-        setLessonsCache(data);
-        // setFetchedLessons((prev)=> { return [...prev, data]});
+        // setLessonsCache(data)
+        setFetchedLessons((prev) => {
+          if (!prev) {
+            return { current: data };
+          }
 
-        setFetchedLessons(data);
+          return { cache: prev, current: data };
+        });
+
+        // setFetchedLessons(data);
         const today = new Date();
         const formattedToday = today
           .toDateString()
@@ -141,103 +148,33 @@ const Days = () => {
           setSelectedDate(days[0]);
           retrieveDataForDay(days[0].displayedDate, data);
         }
-        if (triggerRefetch) {
-          console.log("?");
-          dispatch(setTriggerRefetch());
-        }
+
         setIsDisplay(true);
       } catch (error) {
         setIsDisplay(true);
       }
     };
 
-    if (fetchApi === true || triggerRefetch === true) {
+    if (fetchApi === true) {
       sendPostRequest();
+    } else if (triggerRefetch === true) {
+      console.log("ok!");
+      // const lessons = retrieveDataForDay(currentDate, fetchedLessons.current, 'cache')
     }
   }, [fetchApi, triggerRefetch]);
-
-  // useEffect(() => {
-  //   const sendPostRequest = async () => {
-  //     setIsDisplay(false);
-  //     try {
-  //       const response = await fetch("/api/lessons/month", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           start: new Date(currentDate),
-  //         }),
-  //       });
-
-  //       if (!response.ok) {
-  //         setIsDisplay(true);
-  //         throw new Error(
-  //           `http error! Status: ${response.status} ${response.statusText}`
-  //         );
-  //       }
-
-  //       const data = await response.json();
-  //       setLessonsCache(data)
-  //       // setFetchedLessons((prev)=> { return [...prev, data]});
-
-  //       setFetchedLessons(data);
-  //       const today = new Date();
-  //       const formattedToday = today
-  //         .toDateString()
-  //         .split(" ")
-  //         .slice(0, 3)
-  //         .join(", ");
-  //       const days = renderDays(currentDate, "week");
-
-  //       setDaysState((prev) => {
-  //         const days = renderDays(currentDate, "week");
-  //         return JSON.stringify(prev) === JSON.stringify(days) ? prev : days;
-  //       });
-
-  //       const todayDay = days.find(
-  //         (day) =>
-  //           day.date.toDateString().split(" ").slice(0, 3).join(", ") ===
-  //           formattedToday
-  //       );
-
-  //       if (todayDay) {
-  //         setDayToday(todayDay);
-  //         retrieveDataForDay(todayDay.displayedDate, data);
-  //       } else {
-  //         setSelectedDate(days[0]);
-  //         retrieveDataForDay(days[0].displayedDate, data);
-  //       }
-  //       if (triggerRefetch) {
-  //         dispatch(setTriggerRefetch());
-  //       }
-  //       setIsDisplay(true);
-  //     } catch (error) {
-  //       setIsDisplay(true);
-  //     }
-  //   };
-
-  //   if (useCache) {
-  //     return useFetchFunction
-  //   }
-
-  //   if (fetchApi === true) {
-  //     sendPostRequest();
-  //   }
-
-  // }, [fetchApi, useCache]);
 
   const retrieveDataForDay = (dayDisplayedDate, fetchedLessonsProp) => {
     if (fetchedLessonsProp) {
       const lessonsForDay = fetchedLessonsProp.filter((lesson) => {
         const lessonDayFormated = formatDate(lesson.day);
-        return dayDisplayedDate === lessonDayFormated;
+        return formatDate(dayDisplayedDate) === lessonDayFormated;
       });
 
-      return setLessonsToDisplay(lessonsForDay);
+      setLessonsToDisplay(lessonsForDay);
+      return lessonsForDay;
     }
 
-    const lessonsForDay = fetchedLessons.filter((lesson) => {
+    const lessonsForDay = fetchedLessons?.filter((lesson) => {
       const lessonDayFormated = formatDate(lesson.day);
       return dayDisplayedDate === lessonDayFormated;
     });
@@ -245,26 +182,8 @@ const Days = () => {
     return setLessonsToDisplay(lessonsForDay);
   };
 
-  // const checkForCash = (dayDisplayedDate, fetchedLessonsProp) => {
-  //   if (fetchedLessonsProp) {
-  //     const lessonsForDay = fetchedLessonsProp.filter((lesson) => {
-  //       const lessonDayFormated = formatDate(lesson.day);
-  //       return dayDisplayedDate === lessonDayFormated;
-  //     });
-
-  //     return setLessonsToDisplay(lessonsForDay);
-  //   }
-
-  //   const lessonsForDay = fetchedLessons.filter((lesson) => {
-  //     const lessonDayFormated = formatDate(lesson.day);
-  //     return dayDisplayedDate === lessonDayFormated;
-  //   });
-
-  //   return lessonsForDay;
-  // };
-
   useEffect(() => {
-    if (daysState && fetchedLessons.length > 0) {
+    if (daysState && fetchedLessons.current?.length > 0) {
       const today = new Date();
       const formattedToday = today
         .toDateString()
@@ -280,10 +199,10 @@ const Days = () => {
 
       if (todayDay) {
         setDayToday(todayDay);
-        retrieveDataForDay(todayDay.displayedDate, fetchedLessons);
+        retrieveDataForDay(todayDay.displayedDate, fetchedLessons.current);
       } else {
         setSelectedDate(daysState[0]);
-        retrieveDataForDay(daysState[0].displayedDate, fetchedLessons);
+        retrieveDataForDay(daysState[0].displayedDate, fetchedLessons.current);
       }
       setIsDisplay(true);
     }

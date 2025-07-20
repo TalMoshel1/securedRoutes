@@ -8,6 +8,9 @@ import { useSelector } from "react-redux";
 import "../pages/Calendar/Calendar.css";
 import { CalendarContainer, Content } from "./Calendar/styled-components.jsx";
 import DaysPagination from '../containers/DaysPagination.jsx'
+import DaysPaginationCache from '../containers/DaysPaginationCache.jsx'
+import DaysPaginationCache2 from '../containers/DaysPaginationCache2.jsx'
+
 
 const Calendar = () => {
   const isDeleteLessonModalOpen = useSelector(
@@ -21,6 +24,7 @@ const Calendar = () => {
         <Content className="content">
           {/* <Days className="days" /> */}
           <DaysPagination />
+          {/* <DaysPaginationCache /> */}
 
         </Content>
       </CalendarContainer>

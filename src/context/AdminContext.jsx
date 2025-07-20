@@ -7,23 +7,18 @@ export const AdminProvider = ({ children }) => {
 
   const verify = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/auth/verify-token-admin",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch("/api/auth/verify-token-admin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
       if (!response.ok) {
         setIsVerified(false);
       }
       const data = await response.json();
-      console.log(data.message);
       if (data.message !== "Token is valid") {
-        console.log("wtf");
         return setIsVerified(false);
       }
       setIsVerified(true);

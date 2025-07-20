@@ -39,6 +39,7 @@ const calendarSlice = createSlice({
   
   decrementWeekCounter: (state, action) => {
     if (state.fourWeeksCounter.count === 0) {
+      state.fourWeeksCounter.count = 0
       state.triggerRefetch = true
         return; 
     }

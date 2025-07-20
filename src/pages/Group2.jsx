@@ -69,10 +69,6 @@ const Group2 = () => {
     };
   }, [monthRef]);
 
-  useEffect(() => {
-    console.log("formData.repeatMonth :", formData.repeatMonth);
-  }, [formData.repeatMonth]);
-
   const generateMonthOptions = () => {
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -144,7 +140,7 @@ const Group2 = () => {
 
     try {
       setDisplayPage(false);
-      const response = await fetch("http://localhost:3000/api/lessons/group", {
+      const response = await fetch("/api/lessons/group", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

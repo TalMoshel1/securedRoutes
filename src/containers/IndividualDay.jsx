@@ -92,7 +92,7 @@ export const IndividualDay = ({ displayedData }) => {
           displayLessons().map((l, index) => {
             if (l.isApproved && l.type !== "group" && isVerified) {
               return (
-                <section
+                <li
                   style={{
                     width: "95%",
                     display: "flex",
@@ -156,11 +156,11 @@ export const IndividualDay = ({ displayedData }) => {
                       </div>
                     </div>
                   </ListItem>
-                </section>
+                </li>
               );
             } else if (l.type === "group") {
               return (
-                <section
+                <li
                   style={{
                     width: "95%",
                     display: "flex",
@@ -219,7 +219,7 @@ export const IndividualDay = ({ displayedData }) => {
                       </div>
                     </div>
                   </ListItem>
-                </section>
+                </li>
               );
             }
           })

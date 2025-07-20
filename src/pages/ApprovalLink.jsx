@@ -18,7 +18,7 @@ const ApprovalLink = () => {
     const sendPostRequest = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/lessons/approveLink/${lessonId}`,
+          `http/api/lessons/approveLink/${lessonId}`,
           {
             method: "PUT",
             headers: {
@@ -32,7 +32,7 @@ const ApprovalLink = () => {
           removeCookie();
           setErrorString("שגיאה באימות!");
           throw new Error(
-            `HTTP error! Status: ${response.status} ${response.statusText}`
+            `http error! Status: ${response.status} ${response.statusText}`
           );
         }
 

@@ -36,58 +36,20 @@ const Days = () => {
   const [todayDay, setDayToday] = useState(null);
   const [begginingOfWeek, setBegginingOfWeek] = useState();
 
-
   useEffect(() => {
     if (isToday(currentDate) || !fourWeeksCounter.count) {
-      return setFetchApi(true);
+      setFetchApi(true);
     }
     if (fourWeeksCounter.count) {
       const newDays = renderDays(new Date(renderedDaysDate), "week");
-      console.log("newDays: ", newDays);
       setDaysState((prev) => {
         return JSON.stringify(prev) === JSON.stringify(newDays)
           ? prev
           : newDays;
       });
-
       return setFetchApi(false);
     }
-    // else if (isCurrentSmallerThanNextFetch(currentDate, next4weeks)) {
-    //   const newDays = renderDays(new Date(renderedDaysDate), "week");
-    //   setDaysState((prev) =>
-    //     JSON.stringify(prev) === JSON.stringify(newDays) ? prev : newDays
-    //   );
-    //   return setFetchApi(false)
-    // ;
-    // }
   }, [currentDate, renderedDaysDate]);
-
-  // useEffect(() => {
-  //   console.log('current:Date: ', currentDate)
-  //   console.log('next4weeks: ', next4weeks)
-  //   if (isToday(currentDate)) {
-  //     return setFetchApi(true);
-  //   }
-  //   if (isCurrentBiggerThanNextFetch(currentDate, next4weeks)) {
-  //     console.log('ok ')
-  //     console.log('renderedDaysDate: ', renderedDaysDate)
-  //     const newDays = renderDays(new Date(renderedDaysDate), "week");
-  //     setDaysState((prev) => {
-  //       return JSON.stringify(prev) === JSON.stringify(newDays)
-  //         ? prev
-  //         :
-  //         newDays
-  //     });
-
-  //     return setFetchApi(true);
-  //   } else if (isCurrentSmallerThanNextFetch(currentDate, next4weeks)) {
-  //     const newDays = renderDays(new Date(renderedDaysDate), "week");
-  //     setDaysState((prev) =>
-  //       JSON.stringify(prev) === JSON.stringify(newDays) ? prev : newDays
-  //     );
-  //     return setFetchApi(false);
-  //   }
-  // }, [currentDate, renderedDaysDate]);
 
   useEffect(() => {
     const sendPostRequest = async () => {
@@ -111,10 +73,11 @@ const Days = () => {
         }
 
         const data = await response.json();
-        setLessonsCache(data);
-        // setFetchedLessons((prev)=> { return [...prev, data]});
+        setFetchedLessons((prev) => {
+          return [...prev, ...data];
+        });
 
-        setFetchedLessons(data);
+        // setFetchedLessons(data);
         const today = new Date();
         const formattedToday = today
           .toDateString()
@@ -141,18 +104,20 @@ const Days = () => {
           setSelectedDate(days[0]);
           retrieveDataForDay(days[0].displayedDate, data);
         }
-        if (triggerRefetch) {
-          console.log("?");
-          dispatch(setTriggerRefetch());
-        }
+        // if (triggerRefetch) {
+        //   dispatch(setTriggerRefetch());
+        // }
         setIsDisplay(true);
       } catch (error) {
         setIsDisplay(true);
       }
     };
 
-    if (fetchApi === true || triggerRefetch === true) {
+    if (fetchApi === true) {
       sendPostRequest();
+    } else if (triggerRefetch === true) {
+      const lessons = retrieveDataForDay(currentDate, fetchedLessons);
+      console.log("cached lessons: ", lessons);
     }
   }, [fetchApi, triggerRefetch]);
 
@@ -227,7 +192,16 @@ const Days = () => {
 
   // }, [fetchApi, useCache]);
 
-  const retrieveDataForDay = (dayDisplayedDate, fetchedLessonsProp) => {
+  const retrieveDataForDay = (dayDisplayedDate, fetchedLessonsProp, state) => {
+    if (state === "cache") {
+      const lessonsForDay = fetchedLessonsProp.filter((lesson) => {
+        const lessonDayFormated = formatDate(lesson.day);
+        return formatDate(dayDisplayedDate) === lessonDayFormated;
+      });
+
+      setLessonsToDisplay(lessonsForDay);
+      return lessonsForDay;
+    }
     if (fetchedLessonsProp) {
       const lessonsForDay = fetchedLessonsProp.filter((lesson) => {
         const lessonDayFormated = formatDate(lesson.day);

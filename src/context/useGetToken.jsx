@@ -5,7 +5,7 @@ export const AuthContext = createContext();
 export const AuthorizationProvider = ({ children }) => {
   const signIn = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/auth/signin", {
+      const response = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export const AuthorizationProvider = ({ children }) => {
       });
       if (!response.ok) {
         throw new Error(
-          `HTTP error! Status: ${response.status} ${response.statusText}`
+          `http error! Status: ${response.status} ${response.statusText}`
         );
       }
 
